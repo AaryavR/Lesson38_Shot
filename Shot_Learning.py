@@ -3,9 +3,9 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 model = GPT2LMHeadModel.from_pretrained("gpt2")
 
-def get_response(prompt, max_length=50):
+def get_response(prompt, max_length=100):
     inputs = tokenizer.encode(prompt, return_tensors="pt")
-    outputs = model.generate(inputs, max_length=max_length, num_return_sequences=1)
+    outputs = model.generate(inputs, max_length=max_length, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return response
 
@@ -13,3 +13,27 @@ question_prompt="What are the benefits of exercise?"
 print(f"Question Prompt Response: {get_response(question_prompt)}\n")
 command_prompt = "List 5 benefits of exercise"
 print(f"Command Prompt Response: {get_response(command_prompt)}\n")
+
+# Zero Shot Learning
+print("--- Zero Shot Learning ---")
+zero_shot_prompt = "Translate English to French:\ncheese =>"
+print(f"Prompt:\n{zero_shot_prompt}")
+print(f"Response: {get_response(zero_shot_prompt)}\n")
+
+# One Shot Learning
+print("--- One Shot Learning ---")
+one_shot_prompt = """Translate English to French:
+sea otter => loutre de mer
+cheese =>"""
+print(f"Prompt:\n{one_shot_prompt}")
+print(f"Response: {get_response(one_shot_prompt)}\n")
+
+# Few Shot Learning
+print("--- Few Shot Learning ---")
+few_shot_prompt = """Translate English to French:
+sea otter => loutre de mer
+peppermint => menthe poivrée
+plush giraffe => girafe en peluche
+cheese =>"""
+print(f"Prompt:\n{few_shot_prompt}")
+print(f"Response: {get_response(few_shot_prompt)}\n")
